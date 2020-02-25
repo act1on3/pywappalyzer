@@ -103,7 +103,7 @@ class Target:
         return meta_tags
 
 
-# class describes technologie (wappalyzer database entity)
+# class describes technology (wappalyzer database entity)
 class Technology:
     """Description on Technology class
 
@@ -350,7 +350,6 @@ def parse_pattern(pattern):
     return regexp
 
 
-# TODO: add checking request history step
 # main method for analyzing technologies into application
 def analyze(target, apps, categories):
 
