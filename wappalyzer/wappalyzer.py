@@ -158,7 +158,6 @@ class Technology:
         if 'html' in app.keys():
             self.html = app['html']
             self.hasHtml = True
-
         else:
             self.hasHtml = False
 
@@ -166,7 +165,6 @@ class Technology:
         if 'headers' in app.keys():
             self.headers = app['headers']
             self.hasHeaders = True
-
         else:
             self.hasHeaders = False
 
@@ -174,7 +172,6 @@ class Technology:
         if 'cookies' in app.keys():
             self.cookies = app['cookies']
             self.hasCookies = True
-
         else:
             self.hasCookies = False
 
@@ -182,7 +179,6 @@ class Technology:
         if 'excludes' in app.keys():
             self.excludes = app['excludes']
             self.hasExcludes = True
-
         else:
             self.hasExcludes = False
 
