@@ -1,9 +1,9 @@
 import json
 import requests
 import re
-from sys import argv
+import sys
 
-wappalyzer_database_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/apps.json'
+wappalyzer_database_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/technologies.json'
 
 
 # get wappalyzer apps.json by URL
@@ -18,7 +18,7 @@ def get_wappalyzer_database():
     try:
         db = json.loads(req.text)
 
-        apps = db['apps']
+        apps = db['technologies']
         categories = db['categories']
 
         return True, apps, categories
@@ -477,7 +477,11 @@ def analyze(target, apps, categories):
 # example of usage
 if __name__ == '__main__':
 
-    url = argv[1]
+    try:
+        url = sys.argv[1]
+    except IndexError:
+        sys.exit('Usage: wappalyzer.py <URL>')
+
 
     # create Target class by URL
     t = Target(url, allow_redirects=True)
