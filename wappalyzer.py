@@ -345,7 +345,11 @@ def analyze_url(app_url, tech_url):
 # regexp from database should be transformed to good value
 def parse_pattern(pattern):
     # https://github.com/AliasIO/wappalyzer/blob/master/src/wappalyzer.js#L361
-    regexp = pattern.split('\\;')[0]
+    if type(pattern) is list:
+        # Dirty fix for lists as patterns. Just use first value from the list
+        regexp = pattern[0].split('\\;')[0]
+    else:
+        regexp = pattern.split('\\;')[0]
 
     return regexp
 
