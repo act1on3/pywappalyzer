@@ -2,29 +2,52 @@ import json
 import requests
 import re
 import sys
+import string
+import mergedeep
 
-wappalyzer_database_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/technologies.json'
+wappalyzer_categories_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/categories.json'
 
 
-# get wappalyzer apps.json by URL
-def get_wappalyzer_database():
+def get_full_wappalyzer_techs_database():
+    db = {}
 
+    for name in ('_' + string.ascii_lowercase):
+        try:
+            wappalyzer_technologies_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/technologies/%s.json' % name
+            req = requests.get(wappalyzer_technologies_url)
+
+        except requests.exceptions.ConnectionError as err:
+            print('Issue with technologies pack %s: %s' % (name, str(err)))
+            continue
+
+        try:
+            db = mergedeep.merge(db, json.loads(req.text))
+        except json.decoder.JSONDecodeError as err:
+            print('Issue with parsing technologies pack %s: %s' % (name, str(err)))
+
+    return db
+
+
+def get_full_wappalyzer_cats_database():
     try:
-        req = requests.get(wappalyzer_database_url)
+        req = requests.get(wappalyzer_categories_url)
+        try:
+            return json.loads(req.text)
+        except json.decoder.JSONDecodeError as err:
+            print('Issue with parsing categories: %s' % str(err))
 
     except requests.exceptions.ConnectionError as err:
-        return False, 'ERROR', err
+        print('Issue with getting categories: %s' % str(err))
 
-    try:
-        db = json.loads(req.text)
 
-        apps = db['technologies']
-        categories = db['categories']
+# get wappalyzer technologies database by URL
+def prepare_wappalyzer_database():
 
-        return True, apps, categories
+    # we have to merge database: _.json, a.json, ..., z.json
+    apps = get_full_wappalyzer_techs_database()
+    categories = get_full_wappalyzer_cats_database()
 
-    except json.decoder.JSONDecodeError as err:
-        return False, 'ERROR', err
+    return apps, categories
 
 
 # Class describes target
@@ -494,14 +517,10 @@ if __name__ == '__main__':
     print(t)
 
     # define wappalyzer database
-    status, apps, categories = get_wappalyzer_database()
+    apps, categories = prepare_wappalyzer_database()
 
-    if status:
-        # analyze it
-        used_techs = analyze(t, apps, categories)
+    # analyze it
+    used_techs = analyze(t, apps, categories)
 
-        for tech in used_techs:
-            print(tech)
-
-    else:
-        print('ERROR')
+    for tech in used_techs:
+        print(tech)
