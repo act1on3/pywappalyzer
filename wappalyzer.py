@@ -3,7 +3,6 @@ import requests
 import re
 import sys
 import string
-import mergedeep
 
 wappalyzer_categories_url = 'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/categories.json'
 
@@ -21,7 +20,8 @@ def get_full_wappalyzer_techs_database():
             continue
 
         try:
-            db = mergedeep.merge(db, json.loads(req.text))
+            # merge all files to one database
+            db.update(json.loads(req.text))
         except json.decoder.JSONDecodeError as err:
             print('Issue with parsing technologies pack %s: %s' % (name, str(err)))
 
